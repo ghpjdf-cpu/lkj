@@ -3,136 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus // Analytics Hub</title>
+    <title>AI Core // Neural Dashboard</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Courier New', Courier, monospace;
         }
 
         body {
-            background-color: #f1f5f9;
-            color: #0f172a;
+            background-color: #030712;
+            color: #38bdf8;
             min-height: 100vh;
-            padding: 30px;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        .wrapper {
+        .dashboard {
             width: 100%;
-            max-width: 900px;
-            background: #ffffff;
-            border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
-            padding: 40px;
+            max-width: 800px;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 12px;
+            box-shadow: 0 0 40px rgba(56, 189, 248, 0.15);
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            overflow: hidden;
         }
 
-        .header {
+        .topbar {
+            background: rgba(30, 41, 59, 0.8);
+            padding: 14px 20px;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 20px;
-        }
-
-        .header h1 {
-            font-size: 22px;
-            font-weight: 700;
-        }
-
-        .badge {
-            background: #dbeafe;
-            color: #1d4ed8;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .grid-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        @media (max-width: 700px) {
-            .grid-stats {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .stat-card {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 20px;
-        }
-
-        .stat-card span {
             font-size: 13px;
-            color: #64748b;
+            letter-spacing: 2px;
         }
 
-        .stat-card h2 {
+        .status-dot {
+            height: 10px;
+            width: 10px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 10px #22c55e;
+            margin-right: 8px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        .workspace {
+            padding: 24px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .panel {
+            background: rgba(2, 6, 23, 0.8);
+            border: 1px solid rgba(56, 189, 248, 0.15);
+            border-radius: 8px;
+            padding: 18px;
+        }
+
+        .panel h3 {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.1);
+            padding-bottom: 6px;
+        }
+
+        .metric {
             font-size: 28px;
-            margin-top: 8px;
-            color: #0f172a;
+            font-weight: bold;
+            color: #f8fafc;
+            transition: color 0.3s;
         }
 
-        .action-row {
+        .terminal {
+            grid-column: 1 / -1;
+            background: #020617;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 8px;
+            padding: 16px;
+            height: 180px;
+            overflow-y: auto;
+            font-size: 13px;
+            color: #4ade80;
+            line-height: 1.6;
+        }
+
+        .terminal p {
+            margin-bottom: 4px;
+        }
+
+        .terminal .sys { color: #e2e8f0; }
+        .terminal .cmd { color: #38bdf8; }
+        .terminal .warn { color: #f59e0b; }
+
+        .controls {
+            padding: 16px 24px;
+            background: rgba(30, 41, 59, 0.4);
+            border-top: 1px solid rgba(56, 189, 248, 0.2);
             display: flex;
             gap: 12px;
         }
 
-        .btn-main {
-            background: #0f172a;
-            color: #ffffff;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-weight: 600;
+        .btn {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid #38bdf8;
+            color: #38bdf8;
+            padding: 12px 20px;
+            border-radius: 6px;
             cursor: pointer;
-            transition: background 0.2s;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 13px;
+            transition: all 0.2s ease;
         }
 
-        .btn-main:hover {
-            background: #334155;
+        .btn:hover {
+            background: #38bdf8;
+            color: #030712;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.6);
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-danger {
+            border-color: #ef4444;
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .btn-danger:hover {
+            background: #ef4444;
+            color: #ffffff;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
         }
     </style>
 </head>
 <body>
 
-    <div class="wrapper">
-        <div class="header">
-            <h1>Nexus Control Panel</h1>
-            <div class="badge">Active Node</div>
+    <div class="dashboard">
+        <div class="topbar">
+            <div><span class="status-dot"></span>AI_CORE // NEURAL_AGENT_v4</div>
+            <div id="statusText">STATUS: ACTIVE</div>
         </div>
 
-        <div class="grid-stats">
-            <div class="stat-card">
-                <span>Общий трафик</span>
-                <h2>128,400</h2>
+        <div class="workspace">
+            <div class="panel">
+                <h3>Загрузка Ядра (CPU/GPU)</h3>
+                <div class="metric" id="loadMetric">18.4%</div>
             </div>
-            <div class="stat-card">
-                <span>Конверсия</span>
-                <h2>4.8%</h2>
+            <div class="panel">
+                <h3>Скорость токенов</h3>
+                <div class="metric" id="tokenMetric">1,240 / sec</div>
             </div>
-            <div class="stat-card">
-                <span>Статус системы</span>
-                <h2>99.9%</h2>
+
+            <div class="terminal" id="terminalBox">
+                <p class="sys">[SYSTEM] Инициализация нейросети...</p>
+                <p class="sys">[SYSTEM] Подключение к локальной модели Llama-3-70B...</p>
+                <p class="cmd">> AI Agent готов к работе. Ожидание команд оператора.</p>
             </div>
         </div>
 
-        <div class="action-row">
-            <button class="btn-main">Синхронизировать данные</button>
+        <div class="controls">
+            <button class="btn" onclick="runProtocol()">[ ▶ ] Execute Protocol</button>
+            <button class="btn btn-danger" onclick="flushMemory()">[ ⚡ ] Flush Memory</button>
         </div>
     </div>
+
+    <script>
+        const terminalBox = document.getElementById('terminalBox');
+        const loadMetric = document.getElementById('loadMetric');
+        const tokenMetric = document.getElementById('tokenMetric');
+
+        // Живая динамика цифр (симуляция постоянной работы агента)
+        setInterval(() => {
+            let randomLoad = (15 + Math.random() * 12).toFixed(1);
+            let randomTokens = Math.floor(1100 + Math.random() * 300);
+            
+            // Меняем значения только если не запущен тяжелый процесс
+            if (!window.isProcessing) {
+                loadMetric.innerText = randomLoad + "%";
+                tokenMetric.innerText = randomTokens.toLocaleString() + " / sec";
+            }
+        }, 1500);
+
+        // Функция кнопки Execute Protocol
+        function runProtocol() {
+            window.isProcessing = true;
+            
+            // Выводим логи в терминал
+            logToTerminal("cmd", "> Инициализация протокола глубокого анализа...");
+            loadMetric.innerText = "89.6%";
+            loadMetric.style.color = "#ef4444";
+            tokenMetric.innerText = "4,850 / sec";
+
+            setTimeout(() => {
+                logToTerminal("sys", "[PROCESS] Сканирование баз данных и векторов знаний...");
+            }, 600);
+
+            setTimeout(() => {
+                logToTerminal("sys", "[SUCCESS] Агент сформировал ответ. Нагрузка снижена.");
+                loadMetric.style.color = "#f8fafc";
+                window.isProcessing = false;
+            }, 1800);
+        }
+
+        // Функция кнопки Flush Memory
+        function flushMemory() {
+            window.isProcessing = false;
+            loadMetric.style.color = "#f8fafc";
+            
+            // Очистка и сброс
+            terminalBox.innerHTML = '';
+            logToTerminal("warn", "[WARNING] Оперативная память очищена.");
+            logToTerminal("sys", "[SYSTEM] Перезапуск контекстного окна...");
+            
+            loadMetric.innerText = "5.1%";
+            tokenMetric.innerText = "0 / sec";
+
+            setTimeout(() => {
+                logToTerminal("cmd", "> Агент сброшен до базового состояния.");
+            }, 500);
+        }
+
+        // Вспомогательная функция добавления строк в терминал
+        function logToTerminal(type, text) {
+            const p = document.createElement('p');
+            p.className = type;
+            p.innerText = text;
+            terminalBox.appendChild(p);
+            terminalBox.scrollTop = terminalBox.scrollHeight;
+        }
+    </script>
 
 </body>
 </html>
